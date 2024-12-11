@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data</title>
+    <link rel="stylesheet" href="https://unpkg.com/pico-css@latest/pico.min.css">
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: auto;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ccc;
+        }
+
+        thead {
+            background-color: #D3D3D3; 
+            color: white;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f1def0;
+        }
+
+        tbody tr:hover {
+            background-color: #b9adb9; 
+        }
+
+        @media (max-width: 600px) {
+            th, td {
+                font-size: 15px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Statistics of Students Enrolled in UOB </h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Nationality</th>
+                <th>College</th>
+                <th>Number of Students</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+           
+        </tbody>
+    </table>
+
+    <script>
+        const apiUrl = "https://data.gov.bh/api/explore/v2.1/catalog/datasets/01-statistics-of-students-nationalities_updated/records?where=colleges%20like%20%22IT%22%20AND%20the_programs%20like%20%22bachelor%22&limit=100";
+
+        async function fetchData() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                return data.results; 
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+
+       
+        fetchData().then(data => {
+            const tableBody = document.getElementById('data-table-body');
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.year}</td>
+                    <td>${item.semester}</td>
+                    <td>${item.nationality}</td>
+                    <td>${item.colleges}</td>
+                    <td>${item.number_of_students}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
